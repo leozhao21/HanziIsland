@@ -6,6 +6,13 @@ struct HanziIslandApp: App {
     private let containerResult = AppModelContainer.make()
     @State private var viewModel = AppViewModel()
 
+    init() {
+        // 启动时预热语音引擎并配置音频会话
+        Task { @MainActor in
+            _ = SpeechService.shared
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
             switch containerResult {

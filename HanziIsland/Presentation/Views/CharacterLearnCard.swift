@@ -5,35 +5,40 @@ struct CharacterLearnCard: View {
     let mastery: MasteryLevel
 
     var body: some View {
-        VStack(spacing: 16) {
-            Text(character.character)
-                .font(.system(size: 96, weight: .medium, design: .rounded))
+        VStack(spacing: 20) {
+            HStack(alignment: .center, spacing: 16) {
+                Text(character.character)
+                    .font(.system(size: 120, weight: .bold, design: .rounded))
+
+                KidInlineAudioButton(label: "听字", iconSize: 32) {
+                    SpeechService.shared.speakCharacterWithPinyin(character)
+                }
+            }
 
             Text(character.pinyin)
-                .font(.title)
+                .font(.system(size: 32, weight: .medium, design: .rounded))
                 .foregroundStyle(.secondary)
 
-            Text(character.meaning)
-                .font(.title3)
-
-            VStack(alignment: .leading, spacing: 8) {
-                Label("生活例句", systemImage: "text.quote")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            HStack(alignment: .center, spacing: 10) {
                 Text(character.sentence)
-                    .font(.title2)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-            }
-            .padding()
-            .background(Color.blue.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+                    .font(.system(size: 26, weight: .medium, design: .rounded))
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text(mastery.title)
-                .font(.caption)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 4)
-                .background(.ultraThinMaterial, in: Capsule())
+                KidInlineAudioButton(iconSize: 30) {
+                    SpeechService.shared.speakSentence(character)
+                }
+                .accessibilityLabel("听句子")
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20))
+
+            CharacterDecomposeSection(character: character)
         }
-        .padding()
+        .padding(.vertical, 8)
+        .task(id: character.id) {
+            SpeechService.shared.speakLearnCharacterAuto(character)
+        }
     }
 }

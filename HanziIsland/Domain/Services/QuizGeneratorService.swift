@@ -1,6 +1,6 @@
 import Foundation
 
-/// 生成四类检测题（PRD 第六节）
+/// 生成三类检测题（PRD 第六节）
 struct QuizGeneratorService {
     func generate(
         type: QuizType,
@@ -23,20 +23,19 @@ struct QuizGeneratorService {
             return QuizQuestion(
                 type: .recognize,
                 target: target,
-                prompt: "哪个字是「\(target.character)」？",
+                prompt: "听读音，选出正确的字",
                 options: options,
                 correctIndex: correctIndex
             )
 
-        case .pinyin:
-            let wrongPinyin = pool.filter { $0.id != target.id }.shuffled().prefix(3).map(\.pinyin)
-            var options = wrongPinyin + [target.pinyin]
+        case .listenPick:
+            var options = Array(distractors) + [target.character]
             options.shuffle()
-            let correctIndex = options.firstIndex(of: target.pinyin) ?? 0
+            let correctIndex = options.firstIndex(of: target.character) ?? 0
             return QuizQuestion(
-                type: .pinyin,
+                type: .listenPick,
                 target: target,
-                prompt: target.character,
+                prompt: "听一听，选出听到的字",
                 options: options,
                 correctIndex: correctIndex
             )
@@ -54,26 +53,15 @@ struct QuizGeneratorService {
                 correctIndex: correctIndex,
                 sentenceTemplate: blanked
             )
-
-        case .image:
-            var options = Array(distractors) + [target.character]
-            options.shuffle()
-            let correctIndex = options.firstIndex(of: target.character) ?? 0
-            return QuizQuestion(
-                type: .image,
-                target: target,
-                prompt: "看图选字",
-                options: options,
-                correctIndex: correctIndex
-            )
         }
     }
 
     func generateMixedSession(
         characters: [HanziCharacter],
-        count: Int
+        count: Int,
+        types: [QuizType] = QuizType.allCases
     ) -> [QuizQuestion] {
-        let types = QuizType.allCases
+        guard !types.isEmpty else { return [] }
         var questions: [QuizQuestion] = []
         let shuffled = characters.shuffled()
 

@@ -26,4 +26,14 @@ enum StudyMode: String, Codable, CaseIterable, Identifiable {
 
     var reviewCharactersPerDay: Int { 10 }
     var randomCheckPerDay: Int { 5 }
+
+    /// 简单模式不出听音题，降低对拼音/听辨的要求
+    var quizTypes: [QuizType] {
+        switch self {
+        case .simple:
+            return [.recognize, .sentenceFill]
+        case .standard, .advanced:
+            return QuizType.allCases
+        }
+    }
 }

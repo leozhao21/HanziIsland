@@ -8,15 +8,45 @@ struct HanziCharacter: Codable, Identifiable, Hashable {
     let meaning: String
     let sentence: String
     let level: Int
-    let imageName: String?
     let audioName: String?
     let strokeAnimationName: String?
+    /// 组成该字的偏旁/部件（如 ["日", "月"]）
+    let components: [String]?
+    /// 儿童向拆解讲解
+    let decomposeHint: String?
+    /// 字源类型：象形、会意、形声
+    let evolutionType: String?
+    /// 儿童向汉字演变/字源讲解
+    let evolutionHint: String?
 
     enum CodingKeys: String, CodingKey {
         case id, character, pinyin, meaning, sentence, level
-        case imageName = "image"
         case audioName = "audio"
         case strokeAnimationName = "strokeAnimation"
+        case components
+        case decomposeHint
+        case evolutionType
+        case evolutionHint
+    }
+
+    var hasDecomposition: Bool {
+        guard let decomposeHint else { return false }
+        return !decomposeHint.isEmpty
+    }
+
+    var hasEvolution: Bool {
+        guard let evolutionHint else { return false }
+        return !evolutionHint.isEmpty
+    }
+
+    var showsComponentBreakdown: Bool {
+        guard let components else { return false }
+        return !components.isEmpty
+    }
+
+    /// 是否展示「组成」区块（有拆解讲解或部件数据即可）
+    var showsCompositionSection: Bool {
+        hasDecomposition || showsComponentBreakdown
     }
 }
 

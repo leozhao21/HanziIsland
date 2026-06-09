@@ -27,6 +27,8 @@ struct LearnFlowView: View {
                 modePicker
 
                 if let plan = viewModel.dailyPlan {
+                    intensiveReviewSection
+
                     taskSection(title: "新字 · \(plan.newCharacters.count)", chars: plan.newCharacters, color: .blue)
                     taskSection(title: "复习 · \(plan.reviewCharacters.count)", chars: plan.reviewCharacters, color: .orange)
                     taskSection(title: "随机检查 · \(plan.randomCheckCharacters.count)", chars: plan.randomCheckCharacters, color: .purple)
@@ -45,6 +47,35 @@ struct LearnFlowView: View {
                 }
             }
             .padding()
+        }
+    }
+
+    @ViewBuilder
+    private var intensiveReviewSection: some View {
+        let chars = viewModel.intensiveReviewCharacters
+        if !chars.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("重点复习 · \(chars.count)")
+                    .font(.headline)
+                    .foregroundStyle(.red)
+                Text("答错的字会优先出现在这里，直到连续答对并达到「良好」熟练度。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                FlowLayout(chars: chars.map(\.character))
+                Button("复习错题") {
+                    let questions = viewModel.makeQuizSession(
+                        characters: chars,
+                        count: min(chars.count, 10)
+                    )
+                    viewModel.beginStudySession(characterIds: chars.map(\.id))
+                    session = LearnSession(questions: questions, learnCharacters: [])
+                }
+                .buttonStyle(.bordered)
+                .tint(.orange)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
         }
     }
 
@@ -82,7 +113,8 @@ struct LearnFlowView: View {
     }
 }
 
-struct LearnSession {
+struct LearnSession: Identifiable {
+    let id = UUID()
     var questions: [QuizQuestion]
     var learnCharacters: [HanziCharacter]
     var currentLearnIndex: Int = 0

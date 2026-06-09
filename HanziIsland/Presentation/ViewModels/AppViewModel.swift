@@ -235,7 +235,37 @@ final class AppViewModel {
     }
 
     func makeQuizSession(characters: [HanziCharacter], count: Int) -> [QuizQuestion] {
-        quizGenerator.generateMixedSession(characters: characters, count: count)
+        quizGenerator.generateMixedSession(
+            characters: characters,
+            count: count,
+            types: studyMode.quizTypes
+        )
+    }
+
+    /// 儿童首页「开始学汉字」
+    func makeDailyLearnSession() -> LearnSession? {
+        guard let plan = dailyPlan, plan.totalCount > 0 else { return nil }
+        let all = plan.newCharacters + plan.reviewCharacters + plan.randomCheckCharacters
+        let questions = makeQuizSession(characters: all, count: min(all.count, 10))
+        beginStudySession(characterIds: all.map(\.id))
+        return LearnSession(questions: questions, learnCharacters: plan.newCharacters)
+    }
+
+    /// 儿童首页「再练错题」
+    func makeIntensiveReviewSession() -> LearnSession? {
+        let chars = intensiveReviewCharacters
+        guard !chars.isEmpty else { return nil }
+        let questions = makeQuizSession(characters: chars, count: min(chars.count, 10))
+        beginStudySession(characterIds: chars.map(\.id))
+        return LearnSession(questions: questions, learnCharacters: [])
+    }
+
+    /// 答错后进入重点复习库的字，按遗忘率从高到低
+    var intensiveReviewCharacters: [HanziCharacter] {
+        progressMap.values
+            .filter { $0.inIntensiveReview }
+            .sorted { $0.memory.forgettingRate > $1.memory.forgettingRate }
+            .map(\.character)
     }
 
     func submitAnswer(for characterId: String, correct: Bool) async {
@@ -316,4 +346,56 @@ final class AppViewModel {
     var earnedBadges: [MasteryBadge] {
         MasteryBadge.earned(masteredCount: masteredCount)
     }
+
+    // MARK: - 已学 Tab
+
+    /// 至少答过一次检测题的字（不含仅「认识新字」阶段）
+    var quizzedCharacters: [HanziWithProgress] {
+        progressMap.values.filter { $0.memory.correctCount + $0.memory.wrongCount > 0 }
+    }
+
+    var learnedTabStats: LearnedTabStats {
+        let quizzed = quizzedCharacters
+        return LearnedTabStats(
+            mastered: quizzed.filter { $0.mastery >= .mastered }.count,
+            inProgress: quizzed.filter {
+                $0.mastery >= .learning && $0.mastery < .mastered && !$0.inIntensiveReview
+            }.count,
+            intensive: quizzed.filter(\.inIntensiveReview).count
+        )
+    }
+
+    func filteredLearnedCharacters(filter: LearnedListFilter) -> [HanziWithProgress] {
+        let base = quizzedCharacters
+        let filtered: [HanziWithProgress]
+        switch filter {
+        case .all:
+            filtered = base
+        case .mastered:
+            filtered = base.filter { $0.mastery >= .mastered }
+        case .inProgress:
+            filtered = base.filter {
+                $0.mastery >= .learning && $0.mastery < .mastered && !$0.inIntensiveReview
+            }
+        case .intensive:
+            filtered = base.filter(\.inIntensiveReview)
+        }
+        return filtered.sorted { lhs, rhs in
+            if lhs.mastery != rhs.mastery { return lhs.mastery > rhs.mastery }
+            return lhs.character.pinyin.localizedStandardCompare(rhs.character.pinyin) == .orderedAscending
+        }
+    }
+
+    /// 单字再测：跳过认识新字，直接进入检测
+    func makeCharacterQuizSession(character: HanziCharacter) -> LearnSession {
+        let questions = makeQuizSession(characters: [character], count: 3)
+        beginStudySession(characterIds: [character.id])
+        return LearnSession(questions: questions, learnCharacters: [])
+    }
+}
+
+struct LearnedTabStats: Equatable {
+    let mastered: Int
+    let inProgress: Int
+    let intensive: Int
 }

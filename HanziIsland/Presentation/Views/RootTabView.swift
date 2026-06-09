@@ -5,18 +5,15 @@ struct RootTabView: View {
 
     var body: some View {
         TabView {
-            HomeView(viewModel: viewModel)
-                .tabItem { Label("学习", systemImage: "book.fill") }
+            KidHomeView(viewModel: viewModel)
+                .tabItem { Label("玩", systemImage: "house.fill") }
 
-            LearnFlowView(viewModel: viewModel)
-                .tabItem { Label("今日", systemImage: "sun.max.fill") }
+            LearnedTabView(viewModel: viewModel)
+                .tabItem { Label("已学", systemImage: "book.fill") }
 
             GrowthIslandView(viewModel: viewModel)
-                .tabItem { Label("成长岛", systemImage: "star.fill") }
-
-            ParentCenterView(viewModel: viewModel)
-                .tabItem { Label("家长", systemImage: "person.2.fill") }
+                .tabItem { Label("星星", systemImage: "star.fill") }
         }
-        .tint(Color.accentColor)
+        .tint(Color("AccentGreen"))
     }
 }

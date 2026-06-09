@@ -3,18 +3,16 @@ import Foundation
 /// 检测题型（PRD 第六节）
 enum QuizType: String, CaseIterable, Identifiable {
     case recognize
-    case pinyin
+    case listenPick
     case sentenceFill
-    case image
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
         case .recognize: return "认字"
-        case .pinyin: return "拼音"
-        case .sentenceFill: return "例句"
-        case .image: return "看图选字"
+        case .listenPick: return "听音选字"
+        case .sentenceFill: return "例句填空"
         }
     }
 }

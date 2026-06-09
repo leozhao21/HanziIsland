@@ -12,6 +12,8 @@ try:
 except ImportError:
     lazy_pinyin = None
 
+from hanzi_decomposition import load_decomposition_map, lookup_decomposition
+
 ROOT = Path(__file__).resolve().parents[1] / "HanziIsland" / "Resources"
 SUPPLEMENT = Path(__file__).resolve().parent / "common_chars_supplement.txt"
 
@@ -277,18 +279,29 @@ def make_sentence(ch: str) -> str:
     return f"我认识了{ch}。"[:20]
 
 
-def make_entry(ch: str, level: int, index: int) -> dict:
-    return {
+def make_entry(ch: str, level: int, index: int, decomp_cache: dict) -> dict:
+    components, decompose_hint, evolution_type, evolution_hint = lookup_decomposition(
+        ch, decomp_cache
+    )
+    entry = {
         "id": f"l{level}_{index:04d}_{ord(ch):x}",
         "character": ch,
         "pinyin": pinyin_for(ch),
         "meaning": f"常用汉字「{ch}」",
         "sentence": make_sentence(ch),
         "level": level,
-        "image": None,
         "audio": None,
         "strokeAnimation": None,
     }
+    if components:
+        entry["components"] = components
+    if decompose_hint:
+        entry["decomposeHint"] = decompose_hint
+    if evolution_type:
+        entry["evolutionType"] = evolution_type
+    if evolution_hint:
+        entry["evolutionHint"] = evolution_hint
+    return entry
 
 
 def fill_to(target: int, primary: list[str], pool: str, exclude: set[str]) -> list[str]:
@@ -321,10 +334,13 @@ def main() -> None:
 
     l4 = fill_to(1000, "", pool, exclude)
 
+    decomp_cache = load_decomposition_map()
+    print(f"拆解数据: {len(decomp_cache)} 字")
+
     ROOT.mkdir(parents=True, exist_ok=True)
     for level, chars in [(1, l1), (2, l2), (3, l3), (4, l4)]:
         path = ROOT / f"characters_level{level}.json"
-        data = [make_entry(c, level, i) for i, c in enumerate(chars)]
+        data = [make_entry(c, level, i, decomp_cache) for i, c in enumerate(chars)]
         path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"{path.name}: {len(data)} 字")
 

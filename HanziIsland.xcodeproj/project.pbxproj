@@ -43,6 +43,15 @@
 		AA000022 /* DailyLearningGoal.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000022 /* DailyLearningGoal.swift */; };
 		AA000023 /* DailyGoalCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000023 /* DailyGoalCard.swift */; };
 		AA000024 /* AppModelContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000024 /* AppModelContainer.swift */; };
+		AA000025 /* SpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000025 /* SpeechService.swift */; };
+		AA000026 /* SpeakButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000026 /* SpeakButton.swift */; };
+		AA000027 /* KidHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000027 /* KidHomeView.swift */; };
+		AA000028 /* ParentGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000028 /* ParentGateView.swift */; };
+		AA000029 /* ParentHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000029 /* ParentHubView.swift */; };
+		AA00002A /* KidUIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00002A /* KidUIComponents.swift */; };
+		AA00002C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00002C /* SettingsView.swift */; };
+		AA00002D /* CharacterDecomposeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00002D /* CharacterDecomposeSection.swift */; };
+		AA00002E /* LearnedTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00002E /* LearnedTabView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +91,15 @@
 		BB000022 /* DailyLearningGoal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyLearningGoal.swift; sourceTree = "<group>"; };
 		BB000023 /* DailyGoalCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyGoalCard.swift; sourceTree = "<group>"; };
 		BB000024 /* AppModelContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelContainer.swift; sourceTree = "<group>"; };
+		BB000025 /* SpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechService.swift; sourceTree = "<group>"; };
+		BB000026 /* SpeakButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakButton.swift; sourceTree = "<group>"; };
+		BB000027 /* KidHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KidHomeView.swift; sourceTree = "<group>"; };
+		BB000028 /* ParentGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentGateView.swift; sourceTree = "<group>"; };
+		BB000029 /* ParentHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentHubView.swift; sourceTree = "<group>"; };
+		BB00002A /* KidUIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KidUIComponents.swift; sourceTree = "<group>"; };
+		BB00002C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		BB00002D /* CharacterDecomposeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterDecomposeSection.swift; sourceTree = "<group>"; };
+		BB00002E /* LearnedTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnedTabView.swift; sourceTree = "<group>"; };
 		CC000001 /* HanziIsland.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HanziIsland.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -186,6 +204,7 @@
 				BB000008 /* SpacedRepetitionService.swift */,
 				BB000009 /* QuizGeneratorService.swift */,
 				BB00000A /* DailyTaskService.swift */,
+				BB000025 /* SpeechService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -235,10 +254,18 @@
 				BB000014 /* HomeView.swift */,
 				BB000015 /* LearnFlowView.swift */,
 				BB000016 /* CharacterLearnCard.swift */,
+				BB00002D /* CharacterDecomposeSection.swift */,
 				BB000017 /* QuizSessionView.swift */,
 				BB000018 /* GrowthIslandView.swift */,
 				BB000019 /* ParentCenterView.swift */,
 				BB000023 /* DailyGoalCard.swift */,
+				BB000026 /* SpeakButton.swift */,
+				BB000027 /* KidHomeView.swift */,
+				BB00002E /* LearnedTabView.swift */,
+				BB000028 /* ParentGateView.swift */,
+				BB000029 /* ParentHubView.swift */,
+				BB00002A /* KidUIComponents.swift */,
+				BB00002C /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -339,6 +366,7 @@
 				AA000014 /* HomeView.swift in Sources */,
 				AA000015 /* LearnFlowView.swift in Sources */,
 				AA000016 /* CharacterLearnCard.swift in Sources */,
+				AA00002D /* CharacterDecomposeSection.swift in Sources */,
 				AA000017 /* QuizSessionView.swift in Sources */,
 				AA000018 /* GrowthIslandView.swift in Sources */,
 				AA000019 /* ParentCenterView.swift in Sources */,
@@ -348,6 +376,14 @@
 				AA00001D /* StudyTrendModels.swift in Sources */,
 				AA00001C /* DailyStudySnapshotEntity.swift in Sources */,
 				AA000024 /* AppModelContainer.swift in Sources */,
+				AA000025 /* SpeechService.swift in Sources */,
+				AA000026 /* SpeakButton.swift in Sources */,
+				AA000027 /* KidHomeView.swift in Sources */,
+				AA000028 /* ParentGateView.swift in Sources */,
+				AA000029 /* ParentHubView.swift in Sources */,
+				AA00002A /* KidUIComponents.swift in Sources */,
+				AA00002C /* SettingsView.swift in Sources */,
+				AA00002E /* LearnedTabView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

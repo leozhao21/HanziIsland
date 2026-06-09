@@ -17,7 +17,7 @@
 | 熟练度 6 级 + 答对+1/答错-2 | ✅ `MasteryLevel` |
 | 间隔复习 1/3/7/15/30 天 | ✅ `SpacedRepetitionService` |
 | 每日任务（新字/复习/随机检查） | ✅ 三种家长模式 |
-| 四类检测题 | ✅ 认字/拼音/例句/看图 |
+| 三类检测题 | ✅ 认字/听音选字/例句（系统语音朗读） |
 | 题库回流（重点复习库） | ✅ `inIntensiveReview` + 遗忘率排序 |
 | 掌握字数徽章 | ✅ |
 | 成长岛星星解锁 | ✅ |
@@ -54,7 +54,7 @@ python3 Scripts/generate_character_catalog.py
 ## 后续扩展
 
 1. 人工润色 Level 2–4 例句（可在 `Scripts/generate_character_catalog.py` 的 `CUSTOM_SENTENCES` 中补充）
-2. 接入真实笔画动画、配音、插图资源
+2. 接入真实笔画动画、配音资源
 3. V2：AI 例句生成服务（见 `docs/AI_SENTENCE_SETUP.md`）
 4. Widget / 家长端推送周报
 # HanziIsland

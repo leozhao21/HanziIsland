@@ -5,71 +5,94 @@ struct GrowthIslandView: View {
     @State private var message: String?
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    HStack {
-                        Text("⭐")
-                            .font(.largeTitle)
-                        Text("\(viewModel.starCount) 颗星星")
-                            .font(.title2.bold())
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(
-                        LinearGradient(colors: [.yellow.opacity(0.3), .orange.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing),
-                        in: RoundedRectangle(cornerRadius: 16)
-                    )
-
-                    Text("用星星解锁新岛屿")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-
-                    ForEach(IslandTheme.catalog) { island in
-                        islandCard(island)
-                    }
-
-                    if let message {
-                        Text(message)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+        ScrollView {
+            VStack(spacing: 24) {
+                HStack(spacing: 12) {
+                    Text("⭐")
+                        .font(.system(size: 48))
+                    Text("\(viewModel.starCount)")
+                        .font(.system(size: 56, weight: .bold, design: .rounded))
+                        .foregroundStyle(.orange)
                 }
-                .padding()
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
+                .background(
+                    LinearGradient(
+                        colors: [.yellow.opacity(0.35), .orange.opacity(0.2)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    in: RoundedRectangle(cornerRadius: 28)
+                )
+
+                Text("用星星解锁新岛屿 🏝️")
+                    .font(.title3.bold())
+
+                ForEach(IslandTheme.catalog) { island in
+                    islandCard(island)
+                }
+
+                if let message {
+                    Text(message)
+                        .font(.title3.bold())
+                        .foregroundStyle(.orange)
+                        .multilineTextAlignment(.center)
+                }
             }
-            .navigationTitle("成长岛")
+            .padding(20)
+        }
+        .background(
+            LinearGradient(
+                colors: [Color.orange.opacity(0.1), Color(.systemBackground)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        )
+        .onAppear {
+            SpeechService.shared.speak("这里是星星岛！攒够星星就能解锁新岛屿。")
         }
     }
 
     private func islandCard(_ island: IslandTheme) -> some View {
         let unlocked = viewModel.unlockedIslands.contains(island.id)
-        return HStack {
+        return HStack(spacing: 16) {
             Text(island.emoji)
-                .font(.system(size: 48))
-            VStack(alignment: .leading) {
+                .font(.system(size: 56))
+            VStack(alignment: .leading, spacing: 4) {
                 Text(island.name)
+                    .font(.title2.bold())
+                Text(unlocked ? "✅ 已解锁" : "需要 ⭐\(island.starCost)")
                     .font(.headline)
-                Text(unlocked ? "已解锁" : "需要 \(island.starCost) 星星")
-                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
             if unlocked {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+                Text("🎉")
+                    .font(.largeTitle)
             } else {
-                Button("解锁") {
+                Button {
                     Task {
                         let ok = await viewModel.unlockIsland(island)
-                        message = ok ? "解锁成功：\(island.name)！" : "星星还不够哦"
+                        if ok {
+                            message = "解锁成功：\(island.name)！"
+                            SpeechService.shared.speak("太棒了！解锁了\(island.name)！")
+                        } else {
+                            message = "星星还不够哦，继续学习吧！"
+                            SpeechService.shared.speak("星星还不够哦，继续学习吧！")
+                        }
                     }
+                } label: {
+                    Text("解锁")
+                        .font(.headline.bold())
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(KidPrimaryButtonStyle(color: .orange))
                 .disabled(viewModel.starCount < island.starCost)
             }
         }
-        .padding()
-        .background(.background, in: RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
+        .padding(20)
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24))
     }
 }
