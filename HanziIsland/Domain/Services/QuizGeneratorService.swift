@@ -59,18 +59,36 @@ struct QuizGeneratorService {
     func generateMixedSession(
         characters: [HanziCharacter],
         count: Int,
-        types: [QuizType] = QuizType.allCases
+        types: [QuizType] = QuizType.allCases,
+        requiredCharacters: [HanziCharacter] = []
     ) -> [QuizQuestion] {
-        guard !types.isEmpty else { return [] }
-        var questions: [QuizQuestion] = []
-        let shuffled = characters.shuffled()
+        guard !types.isEmpty, !characters.isEmpty else { return [] }
 
-        for (index, char) in shuffled.prefix(count).enumerated() {
-            let type = types[index % types.count]
+        var questions: [QuizQuestion] = []
+        var usedIds = Set<String>()
+        var typeIndex = 0
+
+        for char in requiredCharacters where characters.contains(where: { $0.id == char.id }) {
+            let type = types[typeIndex % types.count]
+            typeIndex += 1
             if let q = generate(type: type, for: char, from: characters) {
                 questions.append(q)
+                usedIds.insert(char.id)
             }
         }
-        return questions
+
+        let remaining = max(0, count - questions.count)
+        if remaining > 0 {
+            let extras = characters.filter { !usedIds.contains($0.id) }.shuffled()
+            for char in extras.prefix(remaining) {
+                let type = types[typeIndex % types.count]
+                typeIndex += 1
+                if let q = generate(type: type, for: char, from: characters) {
+                    questions.append(q)
+                }
+            }
+        }
+
+        return questions.shuffled()
     }
 }

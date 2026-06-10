@@ -94,11 +94,14 @@ struct QuizSessionView: View {
 
                 Button {
                     SpeechService.shared.stop()
-                    if session.currentLearnIndex + 1 < session.learnCharacters.count {
-                        session.currentLearnIndex += 1
-                    } else {
-                        phase = .quiz
-                        // 进入答题后由首题 onAppear 播放听音，避免与题目语音互相打断
+                    Task {
+                        await viewModel.markCharacterIntroduced(characterId: char.id)
+                        if session.currentLearnIndex + 1 < session.learnCharacters.count {
+                            session.currentLearnIndex += 1
+                        } else {
+                            phase = .quiz
+                            // 进入答题后由首题 onAppear 播放听音，避免与题目语音互相打断
+                        }
                     }
                 } label: {
                     Label("我学会啦！", systemImage: "hand.thumbsup.fill")

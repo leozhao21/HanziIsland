@@ -34,10 +34,7 @@ struct LearnFlowView: View {
                     taskSection(title: "随机检查 · \(plan.randomCheckCharacters.count)", chars: plan.randomCheckCharacters, color: .purple)
 
                     Button("开始学习") {
-                        let all = plan.newCharacters + plan.reviewCharacters + plan.randomCheckCharacters
-                        let questions = viewModel.makeQuizSession(characters: all, count: min(all.count, 10))
-                        viewModel.beginStudySession(characterIds: all.map(\.id))
-                        session = LearnSession(questions: questions, learnCharacters: plan.newCharacters)
+                        session = viewModel.makeDailyStudySession(from: plan)
                     }
                     .buttonStyle(.borderedProminent)
                     .frame(maxWidth: .infinity)

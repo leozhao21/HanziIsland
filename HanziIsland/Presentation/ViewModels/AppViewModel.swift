@@ -234,21 +234,54 @@ final class AppViewModel {
         }
     }
 
-    func makeQuizSession(characters: [HanziCharacter], count: Int) -> [QuizQuestion] {
+    func makeQuizSession(
+        characters: [HanziCharacter],
+        count: Int,
+        requiredCharacters: [HanziCharacter] = []
+    ) -> [QuizQuestion] {
         quizGenerator.generateMixedSession(
             characters: characters,
             count: count,
-            types: studyMode.quizTypes
+            types: studyMode.quizTypes,
+            requiredCharacters: requiredCharacters
         )
+    }
+
+    /// 今日任务完整学习会话（认识新字 + 检测）
+    func makeDailyStudySession(from plan: DailyTaskPlan) -> LearnSession {
+        let all = plan.newCharacters + plan.reviewCharacters + plan.randomCheckCharacters
+        let questionCount = max(plan.newCharacters.count, min(all.count, 10))
+        let questions = makeQuizSession(
+            characters: all,
+            count: questionCount,
+            requiredCharacters: plan.newCharacters
+        )
+        beginStudySession(characterIds: all.map(\.id))
+        return LearnSession(questions: questions, learnCharacters: plan.newCharacters)
     }
 
     /// 儿童首页「开始学汉字」
     func makeDailyLearnSession() -> LearnSession? {
         guard let plan = dailyPlan, plan.totalCount > 0 else { return nil }
-        let all = plan.newCharacters + plan.reviewCharacters + plan.randomCheckCharacters
-        let questions = makeQuizSession(characters: all, count: min(all.count, 10))
-        beginStudySession(characterIds: all.map(\.id))
-        return LearnSession(questions: questions, learnCharacters: plan.newCharacters)
+        return makeDailyStudySession(from: plan)
+    }
+
+    /// 认识新字阶段完成：从未学习推进到「学习中」，避免下次重复从同一字开始
+    func markCharacterIntroduced(characterId: String) async {
+        guard let modelContext else { return }
+        guard var item = progress(for: characterId) else { return }
+        guard item.mastery == .unlearned else { return }
+
+        item.mastery = .learning
+        progressMap[characterId] = item
+
+        do {
+            let progressRepo = ProgressRepository(modelContext: modelContext, catalog: catalogRepo)
+            try progressRepo.save(item)
+            refreshDailyPlan()
+        } catch {
+            loadError = error.localizedDescription
+        }
     }
 
     /// 儿童首页「再练错题」
